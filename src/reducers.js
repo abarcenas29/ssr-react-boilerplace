@@ -1,7 +1,8 @@
 import { combineReducers } from 'redux'
+import HomeReducer from 'Containers/Home/reducer'
 
-const reducers = asyncReducers => combineReducers({
-  ...asyncReducers
-})
+const reducers = {
+  HomeReducer
+}
 
 export default reducers

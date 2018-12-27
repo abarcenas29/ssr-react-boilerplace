@@ -1,6 +1,9 @@
 const path = require('path')
 const ExtractCssChunks = require('extract-css-chunks-webpack-plugin')
+var LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
 const webpack = require('webpack')
+
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 
 const baseOptions = require('./base.options')
 
@@ -45,7 +48,9 @@ const config = (mode) => {
         'process.env': {
           NODE_ENV: JSON.stringify(process.env.NODE_ENV)
         }
-      })
+      }),
+      new LodashModuleReplacementPlugin(),
+      new BundleAnalyzerPlugin()
     ]
   }
 }

@@ -8,10 +8,13 @@ const serverConfig = require('./../webpack/server.webpack')
 
 const app = express()
 
-const compiler = webpack([clientConfig('development'), serverConfig('development')])
+const NODE_ENV = process.env.NODE_ENV
+
+const compiler = webpack(
+  [clientConfig(NODE_ENV), serverConfig(NODE_ENV)])
 const clientCompiler = compiler.compilers[0]
 const publicPath = clientConfig().output.publicPath
-const options = { publicPath, stats: { colors: true }, mode: 'development'}
+const options = { publicPath, stats: { colors: true }, mode: NODE_ENV}
 
 app.use(webpackDevMiddleware(compiler, options))
 app.use(webpackHotMiddleware(clientCompiler))

@@ -1,7 +1,16 @@
 {
   "presets": ["@babel/preset-env", "@babel/preset-react"],
-  "plugins": ["universal-import", "@babel/plugin-syntax-dynamic-import"],
+  "plugins": [
+    "universal-import", 
+    "@babel/plugin-syntax-dynamic-import", 
+    "lodash"
+  ],
   "env": {
+    "production": {
+      "presets": [["@babel/preset-env", {
+        "modules": false
+      }]]
+    },
     "development": {
       "plugins": ["react-hot-loader/babel"]      
     }

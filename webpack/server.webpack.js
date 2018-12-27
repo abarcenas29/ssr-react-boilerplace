@@ -3,9 +3,9 @@ const webpack = require('webpack')
 
 const baseOptions = require('./base.options')
 
-const config = (mode) => {
-  return {
-    mode: mode,
+const config = (env, options) => {
+  const webpackConfig = {
+    mode: options.mode,
     name: 'server',
     target: 'node',
     entry: path.resolve(__dirname, '../server', 'render.js'),
@@ -38,6 +38,17 @@ const config = (mode) => {
       ]
     }
   }
+
+  if (options.mode === 'production') {
+    webpackConfig.output = {
+      libraryTarget: 'commonjs2',
+      filename: '[name].js',
+      chunkFilename: '[name].js',
+      path: path.resolve(__dirname, '../buildServer')
+    }
+  }
+
+  return webpackConfig
 }
 
 module.exports = config

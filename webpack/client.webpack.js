@@ -7,12 +7,12 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 
 const baseOptions = require('./base.options')
 
-const config = (mode) => {
-  return {
-    mode: mode,
+const config = (env, options) => {
+  const webpackConfig = {
+    mode: options.mode,
     name: 'client',
     target: 'web',
-    devtool: (mode === 'production') ? false : 'inline-source-map', 
+    devtool: (options.mode === 'production') ? false : 'inline-source-map', 
     resolve: baseOptions.resolve,
     entry: [
       'webpack-hot-middleware/client',
@@ -49,10 +49,11 @@ const config = (mode) => {
           NODE_ENV: JSON.stringify(process.env.NODE_ENV)
         }
       }),
-      new LodashModuleReplacementPlugin(),
-      new BundleAnalyzerPlugin()
+      new LodashModuleReplacementPlugin()
     ]
   }
+
+  return webpackConfig
 }
 
 module.exports = config

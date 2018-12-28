@@ -5,3 +5,6 @@ buildServer
 
 static/*
 !static/.gitkeep
+
+src/Styles/*
+!src/Styles/.gitkeep

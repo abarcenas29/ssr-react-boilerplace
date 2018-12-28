@@ -22,8 +22,11 @@ if (NODE_ENV === 'production') {
   const path = require('path')
   const webpack = require('webpack')
 
-  webpack([clientWebpack, serverWebpack]).run((err, stats) => {
-    
+  webpack([clientWebpack, serverWebpack]).watch({}, (err, stats) => {
+    if (err) {
+      throw new Error(err)
+    }
+
     const clientStats = stats.toJson().children[0]
     const serverRender = require('../buildServer/main.js').default
 

@@ -1,8 +1,10 @@
 const path = require('path')
+const autoPrefixer = require('autoprefixer')
 const ExtractCssChunks = require('extract-css-chunks-webpack-plugin')
 const LodashModuleReplacementPlugin = require('lodash-webpack-plugin')
-const webpackProgressBar = require('progress-bar-webpack-plugin')
+const cssnano = require('cssnano')
 const webpack = require('webpack')
+const webpackProgressBar = require('progress-bar-webpack-plugin')
 
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 
@@ -34,12 +36,30 @@ const config = (env, options) => {
           use: 'babel-loader'
         },
         {
-          test: /\.css$/,
+          test: /\.(sa|sc|c)ss$/,
           use: [
             ExtractCssChunks.loader,
-            'css-loader'
+            {
+              loader: 'css-loader',
+              options: {
+                sourceMap: true,
+                importLoaders: 1
+              }
+            },
+            {
+              loader: 'postcss-loader',
+              options: {
+                plugins: () => [
+                  autoPrefixer,
+                  cssnano({
+                    preset: 'default'
+                  })
+                ]
+              }
+            },
+            'sass-loader'
           ]
-        }
+        },
       ]
     },
     plugins: [

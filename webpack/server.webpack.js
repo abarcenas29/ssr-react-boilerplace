@@ -31,9 +31,12 @@ const config = (env, options) => {
           use: 'babel-loader'
         },
         {
-          test: /\.css$/,
+          test: /\.(sa|sc|c)ss$/,
           exclude: /node_modules/,
-          use: 'css-loader/locals'
+          use: [
+            { loader: 'css-loader' },
+            { loader: 'sass-loader'}
+          ]
         }
       ]
     }

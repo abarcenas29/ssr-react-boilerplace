@@ -1,3 +1,4 @@
+import './styles.scss'
 import React, { Component } from 'react'
 import { FETCH_DATA_REQUEST_ACTION } from './actions'
 import { connect } from 'react-redux'
@@ -13,7 +14,7 @@ class Home extends Component {
 
   render () {
     return (
-      <div>
+      <div className='container'>
         <h1>Hey I'm Home</h1>
       </div>
     )

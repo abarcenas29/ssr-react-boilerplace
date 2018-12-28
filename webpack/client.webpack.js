@@ -1,6 +1,7 @@
 const path = require('path')
 const ExtractCssChunks = require('extract-css-chunks-webpack-plugin')
-var LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
+const LodashModuleReplacementPlugin = require('lodash-webpack-plugin')
+const webpackProgressBar = require('progress-bar-webpack-plugin')
 const webpack = require('webpack')
 
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
@@ -51,6 +52,20 @@ const config = (env, options) => {
       }),
       new LodashModuleReplacementPlugin()
     ]
+  }
+
+  if (env.NODE_ENV === 'production') {
+    webpackConfig.plugins.push(
+      new webpackProgressBar({
+        summary: true
+      })
+    )
+    webpackConfig.plugins.push(
+      new BundleAnalyzerPlugin({
+        analyzerMode: 'disabled',
+        openAnalyzer: false
+      })
+    )
   }
 
   return webpackConfig

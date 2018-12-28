@@ -1,44 +1,56 @@
 const express = require('express')
+const clientConfig = require('./../webpack/client.webpack')
+const serverConfig = require('./../webpack/server.webpack')
 
 const app = express()
 
 const NODE_ENV = process.env.NODE_ENV
 
+const clientWebpack = clientConfig(process.env, {mode: NODE_ENV})
+const publicPath = clientWebpack.output.publicPath
+const outputPath = clientWebpack.output.path
+const serverWebpack = serverConfig(process.env, {mode: NODE_ENV})
+
+let isBuilt = false
+
+const done = () => !isBuilt && app.listen(3000, () => {
+  isBuilt = true
+  console.log(`Build Complete - listening to 3000`)
+})
+
 if (NODE_ENV === 'production') {
   const path = require('path')
-  const CLIENT_ASSET_DIR = path.join(__dirname, '../buildClient')
-  const CLIENT_STATS_PATH = path.join(__dirname, '../buildClient/stats.json')
-  const SERVER_RENDER_PATH = path.join(__dirname, '../buildServer/main.js')
+  const webpack = require('webpack')
 
-  const stats = require(CLIENT_STATS_PATH)
-  const serverRender = require(SERVER_RENDER_PATH)
+  webpack([clientWebpack, serverWebpack]).run((err, stats) => {
+    
+    const clientStats = stats.toJson().children[0]
+    const serverRender = require('../buildServer/main.js').default
 
-  app.use(express.static(CLIENT_ASSET_DIR))
-  app.use(serverRender.default(stats))
+    app.use(publicPath, express.static(outputPath))
+    app.use(serverRender({ clientStats }))
+    done()
+  })
 } else {
-  // https://github.com/faceyspacey/webpack-flush-chunks/blob/master/docs/webpack-stats.md
   const webpack = require('webpack')
   const webpackDevMiddleware = require('webpack-dev-middleware')
   const webpackHotMiddleware = require('webpack-hot-middleware')
   const webpackHotServerMiddleware = require('webpack-hot-server-middleware')
-  const clientConfig = require('./../webpack/client.webpack')
-  const serverConfig = require('./../webpack/server.webpack')
+  
 
   const compiler = webpack(
     [
-      clientConfig(process.env, {mode: NODE_ENV}), 
-      serverConfig(process.env, {mode: NODE_ENV})
+      clientWebpack,
+      serverWebpack
     ]
   )
   const clientCompiler = compiler.compilers[0]
-  const publicPath = clientConfig(process.env, {mode: NODE_ENV}).output.publicPath
   const options = { publicPath, stats: { colors: true }, mode: NODE_ENV}
   
   app.use(webpackDevMiddleware(compiler, options))
   app.use(webpackHotMiddleware(clientCompiler))
   app.use(webpackHotServerMiddleware(compiler))
+
+  compiler.plugin('done', done)
 }
 
-app.listen(3000, () => {
-  console.log('lisenting at 3000')
-})

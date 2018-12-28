@@ -1,1 +1,7 @@
 node_modules
+
+buildClient
+buildServer
+
+static/*
+!static/.gitkeep
